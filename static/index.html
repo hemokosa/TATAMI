@@ -1,0 +1,538 @@
+
+<html>
+<head>
+<title>Astronomical Calculations</title>
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="stylesheet" type="text/css" href="base.css" title="default">
+<script type='text/javascript' src='core.js'></script>
+<script type='text/javascript' src='solarsystem.js'></script>
+<script type='text/javascript' src='satellite.js'></script>
+
+<script type='text/javascript' src='mootools-core-1.4.5-full-compat-yc.js'></script>
+<!--<script src="mootools-1.2-core.js" type="text/javascript" charset="utf-8"></script>-->
+<script src="mootools-1.2-more.js" type="text/javascript" charset="utf-8"></script>
+<script type='text/javascript' src='moochart-0.1b1-nc.js'></script>
+<!--<script src="moochart-0.1b1.js" type="text/javascript" charset="utf-8"></script>-->
+
+<script src="main.js" type="text/javascript" charset="utf-8"></script>
+
+
+<style type="text/css">
+<!--
+p{
+margin:0.5em 2em 0 2em;
+
+}
+textarea{
+  font-size:large;
+  margin:auto;
+  padding:0;
+  width:100%;
+}
+form{
+  margin:;
+  padding:0;
+  width:100%;
+}
+
+-->
+</style>
+<script type="text/javascript">
+<!--
+// JPL Solar System Dynamics
+// http://ssd.jpl.nasa.gov/
+// http://www.archive.org/details/introductorytrea025825mbp
+// http://www.projectpluto.com/source.htm
+// ftp://syrte.obspm.fr/pub/polac/2_lunar_solutions/
+function calc(year,month,day,hour,minute,second) {
+// var date = new Date(2010,8,16,9,0,0)
+ //var date = new Date(2008,0,10,9,0,0)
+ //var time = new Orb.Time(date);
+  
+  var date = new Date(year,month,day,hour,minute);
+  var time = new Orb.Time(date);
+  
+
+  var observer = {
+    "latitude" : 35.6833453,
+    "longitude" : 139.733300,
+    "altitude" : 0
+  }  
+  document.getElementById("results_0_1").innerHTML ="longitude: " + observer.longitude;
+  document.getElementById("results_0_2").innerHTML ="latitude: " + observer.latitude;
+  document.getElementById("results_0_3").innerHTML ="altitude: " + observer.altitude;
+  
+  document.getElementById("results_1_1").innerHTML ="VERSION: " + Orb.VERSION;
+  document.getElementById("results_1_2").innerHTML ="AUTHOR: " + Orb.AUTHOR;
+  document.getElementById("results_1_3").innerHTML ="LICENSE: " + Orb.LICENSE;
+  
+  document.getElementById("results_2_1").innerHTML ="local: " + time.date;
+  document.getElementById("results_2_2").innerHTML ="JD: " + time.jd();
+  var jd_now = time.jd() + time.hours/24+time.minutes/1440+time.seconds/86400;
+  document.getElementById("results_2_3").innerHTML ="JD(Now): " + jd_now;  
+  document.getElementById("results_2_4").innerHTML ="GMST: " + time.gmst();
+  
+  var SS = new Orb.SolarSystem();
+  
+  var sun = SS.Sun();
+  var equatorial = sun.position.equatorial(time);
+  document.getElementById("results_3_1").innerHTML ="ra: " + equatorial.ra +" ("+ dms(equatorial.ra) + ")";
+  document.getElementById("results_3_2").innerHTML ="dec: " + equatorial.dec +" ("+ dms(equatorial.dec) + ")";
+  document.getElementById("results_3_3").innerHTML ="distance: " + equatorial.distance;
+  var obs = new Orb.Observation(observer,equatorial);
+  var look = obs.horizontal(time);
+  var azimuth = look.azimuth;
+  var elevation = look.elevation;
+  document.getElementById("results_3_4").innerHTML ="azimuth: " + azimuth;
+  document.getElementById("results_3_5").innerHTML ="elevation: " + elevation;
+  
+  var sun2 = SS.Sun2();
+  var equatorial = sun2.position.equatorial(time);
+  document.getElementById("results_3_6").innerHTML ="ra: " + equatorial.ra +" ("+ dms(equatorial.ra) + ")";
+  document.getElementById("results_3_7").innerHTML ="dec: " + equatorial.dec +" ("+ dms(equatorial.dec) + ")";
+  document.getElementById("results_3_8").innerHTML ="distance: " + equatorial.distance;
+  var obs = new Orb.Observation(observer,equatorial);
+  var look = obs.horizontal(time);
+  var azimuth = look.azimuth;
+  var elevation = look.elevation;
+  document.getElementById("results_3_9").innerHTML ="azimuth: " + azimuth;
+  document.getElementById("results_3_10").innerHTML ="elevation: " + elevation;
+
+  var earth = SS.Earth();
+  var ecliptic = earth.position.ecliptic(time);
+  document.getElementById("results_4_1").innerHTML ="longitude: " + ecliptic.longitude;
+  document.getElementById("results_4_2").innerHTML ="latitude: " + ecliptic.latitude;
+  document.getElementById("results_4_3").innerHTML ="radius: " + ecliptic.radius;
+  document.getElementById("results_4_4").innerHTML ="x: " + ecliptic.x;
+  document.getElementById("results_4_5").innerHTML ="y: " + ecliptic.y;
+  document.getElementById("results_4_6").innerHTML ="z: " + ecliptic.z;  
+  
+  
+  var moon = SS.Moon(time);
+  var ecliptic = moon.position.ecliptic(time);
+  document.getElementById("results_5_1").innerHTML ="x: " + ecliptic.x/149597870.691;
+  document.getElementById("results_5_2").innerHTML ="y: " + ecliptic.y/149597870.691;
+  document.getElementById("results_5_3").innerHTML ="z: " + ecliptic.z/149597870.691;
+  var equatorial = moon.position.equatorial(time);
+  document.getElementById("results_5_4").innerHTML ="ra: " + equatorial.ra +" ("+ dms(equatorial.ra) + ")";
+  document.getElementById("results_5_5").innerHTML ="dec: " + equatorial.dec +" ("+ dms(equatorial.dec) + ")";
+  document.getElementById("results_5_6").innerHTML ="distance: " + equatorial.distance;
+  var phase = moon.phase(time);
+  document.getElementById("results_5_7").innerHTML ="phase: " + phase.phase;
+
+  var obs = new Orb.Observation(observer, equatorial);
+  var look = obs.horizontal(time);
+  var azimuth = look.azimuth;
+  var elevation = look.elevation;
+  document.getElementById("results_5_8").innerHTML ="azimuth: " + azimuth;
+  document.getElementById("results_5_9").innerHTML ="elevation: " + elevation;
+
+
+  var mer = SS.Mercury();
+  var ecliptic = mer.position.ecliptic(time);
+  document.getElementById("results_7_1").innerHTML ="x: " + ecliptic.x/149597870.691;
+  document.getElementById("results_7_2").innerHTML ="y: " + ecliptic.y/149597870.691;
+  document.getElementById("results_7_3").innerHTML ="z: " + ecliptic.z/149597870.691;
+
+  var equatorial = mer.position.equatorial(time);
+  document.getElementById("results_7_4").innerHTML ="ra: " + equatorial.ra +" ("+ dms(equatorial.ra) + ")";
+  document.getElementById("results_7_5").innerHTML ="dec: " + equatorial.dec +" ("+ dms(equatorial.dec) + ")";
+  document.getElementById("results_7_6").innerHTML ="distance: " + equatorial.distance;
+  var obs = new Orb.Observation(observer, equatorial);
+  var look = obs.horizontal(time);
+  var azimuth = look.azimuth;
+  var elevation = look.elevation;
+  document.getElementById("results_7_7").innerHTML ="azimuth: " + azimuth;
+  document.getElementById("results_7_8").innerHTML ="elevation: " + elevation;
+
+  var mars = SS.Mars();
+  var ecliptic = mer.position.ecliptic(time);
+  document.getElementById("results_6_1").innerHTML ="x: " + ecliptic.x/149597870.691;
+  document.getElementById("results_6_2").innerHTML ="y: " + ecliptic.y/149597870.691;
+  document.getElementById("results_6_3").innerHTML ="z: " + ecliptic.z/149597870.691;
+
+  var equatorial = mars.position.equatorial(time);
+  document.getElementById("results_6_4").innerHTML ="ra: " + equatorial.ra +" ("+ dms(equatorial.ra) + ")";
+  document.getElementById("results_6_5").innerHTML ="dec: " + equatorial.dec +" ("+ dms(equatorial.dec) + ")";
+  document.getElementById("results_6_6").innerHTML ="distance: " + equatorial.distance;
+  var obs = new Orb.Observation(observer, equatorial);
+  var look = obs.horizontal(time);
+  var azimuth = look.azimuth;
+  var elevation = look.elevation;
+  document.getElementById("results_6_7").innerHTML ="azimuth: " + azimuth;
+  document.getElementById("results_6_8").innerHTML ="elevation: " + elevation;
+
+  var ven = SS.Venus();
+
+  var ecliptic = ven.position.ecliptic(time);
+  document.getElementById("results_8_1").innerHTML ="x: " + ecliptic.x/149597870.691;
+  document.getElementById("results_8_2").innerHTML ="y: " + ecliptic.y/149597870.691;
+  document.getElementById("results_8_3").innerHTML ="z: " + ecliptic.z/149597870.691;
+
+  var equatorial = ven.position.equatorial(time);
+  document.getElementById("results_8_4").innerHTML ="ra: " + equatorial.ra +" ("+ dms(equatorial.ra) + ")";
+  document.getElementById("results_8_5").innerHTML ="dec: " + equatorial.dec +" ("+ dms(equatorial.dec) + ")";
+  document.getElementById("results_8_6").innerHTML ="distance: " + equatorial.distance;
+  var obs = new Orb.Observation(observer, equatorial);
+  var look = obs.horizontal(time);
+  var azimuth = look.azimuth;
+  var elevation = look.elevation;
+  document.getElementById("results_8_7").innerHTML ="azimuth: " + azimuth;
+  document.getElementById("results_8_8").innerHTML ="elevation: " + elevation;
+
+  var jup = SS.Jupiter();
+
+  var ecliptic = jup.position.ecliptic(time);
+  document.getElementById("results_9_1").innerHTML ="x: " + ecliptic.x/149597870.691;
+  document.getElementById("results_9_2").innerHTML ="y: " + ecliptic.y/149597870.691;
+  document.getElementById("results_9_3").innerHTML ="z: " + ecliptic.z/149597870.691;
+
+  var equatorial = jup.position.equatorial(time);
+  document.getElementById("results_9_4").innerHTML ="ra: " + equatorial.ra +" ("+ dms(equatorial.ra) + ")";
+  document.getElementById("results_9_5").innerHTML ="dec: " + equatorial.dec +" ("+ dms(equatorial.dec) + ")";
+  document.getElementById("results_9_6").innerHTML ="distance: " + equatorial.distance;
+  var obs = new Orb.Observation(observer, equatorial);
+  var look = obs.horizontal(time);
+  var azimuth = look.azimuth;
+  var elevation = look.elevation;
+  document.getElementById("results_9_7").innerHTML ="azimuth: " + azimuth;
+  document.getElementById("results_9_8").innerHTML ="elevation: " + elevation;
+
+  var sat = SS.Saturn();
+
+  var ecliptic = sat.position.ecliptic(time);
+  document.getElementById("results_10_1").innerHTML ="x: " + ecliptic.x/149597870.691;
+  document.getElementById("results_10_2").innerHTML ="y: " + ecliptic.y/149597870.691;
+  document.getElementById("results_10_3").innerHTML ="z: " + ecliptic.z/149597870.691;
+
+  var equatorial = sat.position.equatorial(time);
+  document.getElementById("results_10_4").innerHTML ="ra: " + equatorial.ra +" ("+ dms(equatorial.ra) + ")";
+  document.getElementById("results_10_5").innerHTML ="dec: " + equatorial.dec +" ("+ dms(equatorial.dec) + ")";
+  document.getElementById("results_10_6").innerHTML ="distance: " + equatorial.distance;
+  var obs = new Orb.Observation(observer, equatorial);
+  var look = obs.horizontal(time);
+  var azimuth = look.azimuth;
+  var elevation = look.elevation;
+  document.getElementById("results_10_7").innerHTML ="azimuth: " + azimuth;
+  document.getElementById("results_10_8").innerHTML ="elevation: " + elevation;
+
+  var ura = SS.Uranus();
+
+  var ecliptic = ura.position.ecliptic(time);
+  document.getElementById("results_11_1").innerHTML ="x: " + ecliptic.x/149597870.691;
+  document.getElementById("results_11_2").innerHTML ="y: " + ecliptic.y/149597870.691;
+  document.getElementById("results_11_3").innerHTML ="z: " + ecliptic.z/149597870.691;
+
+  var equatorial = ura.position.equatorial(time);
+  document.getElementById("results_11_4").innerHTML ="ra: " + equatorial.ra +" ("+ dms(equatorial.ra) + ")";
+  document.getElementById("results_11_5").innerHTML ="dec: " + equatorial.dec +" ("+ dms(equatorial.dec) + ")";
+  document.getElementById("results_11_6").innerHTML ="distance: " + equatorial.distance;
+
+  var obs = new Orb.Observation(observer, equatorial);
+  var look = obs.horizontal(time);
+  var azimuth = look.azimuth;
+  var elevation = look.elevation;
+  document.getElementById("results_11_7").innerHTML ="azimuth: " + azimuth;
+  document.getElementById("results_11_8").innerHTML ="elevation: " + elevation;
+
+  var nep = SS.Neptune();
+
+  var ecliptic = nep.position.ecliptic(time);
+  document.getElementById("results_12_1").innerHTML ="x: " + ecliptic.x/149597870.691;
+  document.getElementById("results_12_2").innerHTML ="y: " + ecliptic.y/149597870.691;
+  document.getElementById("results_12_3").innerHTML ="z: " + ecliptic.z/149597870.691;
+
+  var equatorial = nep.position.equatorial(time);
+  document.getElementById("results_12_4").innerHTML ="ra: " + equatorial.ra +" ("+ dms(equatorial.ra) + ")";
+  document.getElementById("results_12_5").innerHTML ="dec: " + equatorial.dec +" ("+ dms(equatorial.dec) + ")";
+  document.getElementById("results_12_6").innerHTML ="distance: " + equatorial.distance;
+ 
+  var obs = new Orb.Observation(observer, equatorial);
+  var look = obs.horizontal(time);
+  var azimuth = look.azimuth;
+  var elevation = look.elevation;
+  document.getElementById("results_12_7").innerHTML ="azimuth: " + azimuth;
+  document.getElementById("results_12_8").innerHTML ="elevation: " + elevation;
+
+  var tle = {
+  "first_line":  "1 25544U 98067A   11318.51274148  .00016717  00000-0  10270-3 0  9003",
+  "second_line": "2 25544  51.6365 124.1685 0021724  56.2169 304.1052 15.60123650 24381"
+}
+
+  var satellite = new Orb.Satellite(tle);
+  var rect = satellite.position.rectangular(time);
+  document.getElementById("results_13_1").innerHTML ="x: " + rect.x;
+  document.getElementById("results_13_2").innerHTML ="y: " + rect.y;
+  document.getElementById("results_13_3").innerHTML ="z: " + rect.z;
+
+  var geo =  satellite.position.geographic(time);
+  document.getElementById("results_13_4").innerHTML ="longitude: " + geo.longitude;
+  document.getElementById("results_13_5").innerHTML ="latitude: " + geo.latitude;
+  document.getElementById("results_13_6").innerHTML ="altitude: " + geo.altitude;
+/*
+  var obs = new Orb.Observation(observer, satellite);
+  var look = obs.horizontal();
+  var azimuth = look.azimuth;
+  var elevation = look.elevation;
+  document.getElementById("results_13_4").innerHTML ="azimuth: " + azimuth;
+  document.getElementById("results_13_5").innerHTML ="elevation: " + elevation;
+
+*/
+
+
+}
+function dms(num){
+if(num<0){
+  var sign = -1;
+}else{
+  var sign = 1;
+}
+var num = Math.abs(num);
+var d0 = num;
+var d = Math.floor(d0);
+var m0 = (d0-d)*60;
+var m = Math.floor(m0);
+var s = ((m0-m)*60).toFixed(2);
+return d*sign + " " + m + " " + s
+}
+function run(){
+  var code = document.form.code.value;
+  try{
+    var result = document.form.result.value;
+    eval(code);
+  }catch(e){
+    document.form.result.value = e;
+  }
+}
+
+function draw(){
+ if(chart1){
+ chart1.empty();
+ }
+ 
+ 
+ var chart1 = new Chart.Bubble('chart1', {
+		width: 600,
+		height: 350,
+		lineColor: '#3f3f3f',
+		xmin: -300,xmax: 300, 
+		ymin: -300,ymax: 300,
+		zmin: 0, zmax: 100,
+		bubbleSize: 40
+	});
+	
+ var earth_x = document.getElementById("results_4_4").innerHTML;
+ var earth_y = document.getElementById("results_4_5").innerHTML;
+ earth_x = earth_x.split(" ");
+ earth_y = earth_y.split(" ");
+ 
+ var mercury_x = document.getElementById("results_7_1").innerHTML;
+ var mercury_y = document.getElementById("results_7_2").innerHTML;
+ mercury_x = mercury_x.split(" ");
+ mercury_y = mercury_y.split(" ");
+ 
+ var venus_x = document.getElementById("results_8_1").innerHTML;
+ var venus_y = document.getElementById("results_8_2").innerHTML;
+ venus_x = venus_x.split(" ");
+ venus_y = venus_y.split(" ");
+ 
+ var mars_x = document.getElementById("results_6_1").innerHTML;
+ var mars_y = document.getElementById("results_6_2").innerHTML;
+ mars_x = mars_x.split(" ");
+ mars_y = mars_y.split(" ");
+ 
+ var jupiter_x = document.getElementById("results_9_1").innerHTML;
+ var jupiter_y = document.getElementById("results_9_2").innerHTML;
+ jupiter_x = jupiter_x.split(" ");
+ jupiter_y = jupiter_y.split(" ");
+ 
+ var saturn_x = document.getElementById("results_10_1").innerHTML;
+ var saturn_y = document.getElementById("results_10_2").innerHTML;
+ saturn_x = saturn_x.split(" ");
+ saturn_y = saturn_y.split(" ");
+ 
+ var uranus_x = document.getElementById("results_11_1").innerHTML;
+ var uranus_y = document.getElementById("results_11_2").innerHTML;
+ uranus_x = uranus_x.split(" ");
+ uranus_y = uranus_y.split(" ");
+ 
+ var neptune_x = document.getElementById("results_12_1").innerHTML;
+ var neptune_y = document.getElementById("results_12_2").innerHTML;
+ neptune_x = neptune_x.split(" ");
+ neptune_y = neptune_y.split(" ");
+ 
+ var unit = Math.pow(10,10);
+ 
+ 
+ 
+ chart1.bubbles = [
+ 		{x: 0, y: 0, z: 0, color: '#ff0000', tip: 'Sun'},
+ 		{x: mercury_x[1] * unit, y: mercury_x[1] * unit, z: 0, color: '#318bd6', tip: 'Mercury'},
+		{x: venus_x[1] * unit, y: venus_x[1] * unit, z: 0, color: '#000', tip: 'Venus'},
+		{x: earth_x[1] * 100, y: earth_y[1] * 100, z: 0, color: '#000099', tip: 'Earth'},
+		{x: mars_x[1]  * unit * 5, y: mars_y[1] * unit * 5, z: 0, color: '#cc0033', tip: 'Mars'},
+		{x: jupiter_x[1] * unit, y: jupiter_y[1] * unit, z: 0, color: '#cc9966', tip: 'Jupiter'},
+		{x: saturn_x[1] * unit, y: saturn_y[1] * unit, z: 0, color: '#663333', tip: 'Saturn'},
+ 		
+//		{x: mercury_x[1] * unit, y: mercury_x[1] * unit, z: 0, color: '#318bd6', tip: 'Mercury x:'+mercury_x[1] * unit+'\n y:'+mercury_y[1] * unit},
+//		{x: venus_x[1] * unit, y: venus_x[1] * unit, z: 0, color: '#000', tip: 'Venus'+'x:'+venus_x[1] * unit+' y:'+venus_y[1] * unit},
+//		{x: earth_x[1] * 100, y: earth_y[1] * 100, z: 0, color: '#000099', tip: 'Earth'+'x:'+earth_x[1] * 100+' y:'+earth_y[1] * 100},
+//		{x: mars_x[1]  * unit * 5, y: mars_y[1] * unit * 5, z: 0, color: '#cc0033', tip: 'Mars'+'x:'+mars_x[1]  * unit * 5 +' y:'+mars_y[1]  * unit * 5},
+//		{x: jupiter_x[1] * unit, y: jupiter_y[1] * unit, z: 0, color: '#cc9966', tip: 'Jupiter'+'x:'+jupiter_x[1] * unit +' y:'+jupiter_y[1] * unit},
+//		{x: saturn_x[1] * unit, y: saturn_y[1] * unit, z: 0, color: '#663333', tip: 'Saturn'+'x:'+saturn_x[1] * unit+' y:'+saturn_y[1] * unit},
+ ];
+ //chart1.addBubble(mercury_x[1],mercury_y[1],5,'#fff','hoge');
+ //chart1.addBubble(5,5,5,'#fff','hoge2');
+ 
+ chart1.redraw();
+	
+}
+
+//-->
+</script>
+</head>
+<body>
+<h1>Astronomical Calculations</h1>
+
+<h1 style="clear:both">Input your birthday</h1>
+<form name="Fin">
+<p>
+<input type="text" maxlength="5" size="5" name="iYear">
+年
+<input type="text" maxlength="3" size="3" name="iMonth">
+月
+<input type="text" maxlength="3" size="3" name="iDay">
+日
+<input type="text" maxlength="3" size="3" name="iHour">
+時
+<input type="text" maxlength="3" size="3" name="iMinute">
+分 （日本時）
+</p>
+<p><input type="button" onClick="calc(form.iYear.value,form.iMonth.value,form.iDay.value,form.iHour.value,form.iMinute.value)" value="clac"></p>
+<p><input type="button" onClick="draw()" value="draw"></p>
+</form>
+
+
+
+
+
+<h1>Position Map</h1>
+<div id="chart1"></div>
+</div>
+
+<center>distance /AU * E+10</center>
+
+<h1 style="clear:both">Outputs</h1>
+<h2 style="clear:both">Observer</h2>
+<p id="results_0_1"></p>
+<p id="results_0_2"></p>
+<p id="results_0_3"></p>
+<h2>Orb</h2>
+<p id="results_1_1"></p>
+<p id="results_1_2"></p>
+<p id="results_1_3"></p>
+<h2>OTime</h2>
+<p id="results_2_1"></p>
+<p id="results_2_2"></p>
+<p id="results_2_3"></p>
+<p id="results_2_4"></p>
+
+<h2>Sun</h2>
+<p id="results_3_1"></p>
+<p id="results_3_2"></p>
+<p id="results_3_3"></p>
+<p id="results_3_4"></p>
+<p id="results_3_5"></p>
+
+<h2>Sun2</h2>
+<p id="results_3_6"></p>
+<p id="results_3_7"></p>
+<p id="results_3_8"></p>
+<p id="results_3_9"></p>
+<p id="results_3_10"></p>
+
+
+<h2>Earth</h2>
+<p id="results_4_1"></p>
+<p id="results_4_2"></p>
+<p id="results_4_3"></p>
+<p id="results_4_4"></p>
+<p id="results_4_5"></p>
+<p id="results_4_6"></p>
+<h2>Moon</h2>
+<p id="results_5_1"></p>
+<p id="results_5_2"></p>
+<p id="results_5_3"></p>
+<p id="results_5_4"></p>
+<p id="results_5_5"></p>
+<p id="results_5_6"></p>
+<p id="results_5_7"></p>
+<p id="results_5_8"></p>
+<p id="results_5_9"></p>
+<h2>Mercury</h2>
+<p id="results_7_1"></p>
+<p id="results_7_2"></p>
+<p id="results_7_3"></p>
+<p id="results_7_4"></p>
+<p id="results_7_5"></p>
+<p id="results_7_6"></p>
+<p id="results_7_7"></p>
+<p id="results_7_8"></p>
+<h2>Venus</h2>
+<p id="results_8_1"></p>
+<p id="results_8_2"></p>
+<p id="results_8_3"></p>
+<p id="results_8_4"></p>
+<p id="results_8_5"></p>
+<p id="results_8_6"></p>
+<p id="results_8_7"></p>
+<p id="results_8_8"></p>
+<h2>Mars</h2>
+<p id="results_6_1"></p>
+<p id="results_6_2"></p>
+<p id="results_6_3"></p>
+<p id="results_6_4"></p>
+<p id="results_6_5"></p>
+<p id="results_6_6"></p>
+<p id="results_6_7"></p>
+<p id="results_6_8"></p>
+<h2>Jupiter</h2>
+<p id="results_9_1"></p>
+<p id="results_9_2"></p>
+<p id="results_9_3"></p>
+<p id="results_9_4"></p>
+<p id="results_9_5"></p>
+<p id="results_9_6"></p>
+<p id="results_9_7"></p>
+<p id="results_9_8"></p>
+<h2>Saturn</h2>
+<p id="results_10_1"></p>
+<p id="results_10_2"></p>
+<p id="results_10_3"></p>
+<p id="results_10_4"></p>
+<p id="results_10_5"></p>
+<p id="results_10_6"></p>
+<p id="results_10_7"></p>
+<p id="results_10_8"></p>
+
+<h2>Uranus</h2>
+<p id="results_11_1"></p>
+<p id="results_11_2"></p>
+<p id="results_11_3"></p>
+<p id="results_11_4"></p>
+<p id="results_11_5"></p>
+<p id="results_11_6"></p>
+<p id="results_11_7"></p>
+<p id="results_11_8"></p>
+<h2>Neptune</h2>
+<p id="results_12_1"></p>
+<p id="results_12_2"></p>
+<p id="results_12_3"></p>
+<p id="results_12_4"></p>
+<p id="results_12_5"></p>
+<p id="results_12_6"></p>
+<p id="results_12_7"></p>
+<p id="results_12_8"></p>
+
+</body>
+</html>

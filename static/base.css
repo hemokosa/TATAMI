@@ -1,0 +1,138 @@
+body
+{
+	margin-left: 60pt;
+	margin-right: 60pt;
+	font-family:Verdana, Helvetica, sans-serif;
+	background-color: #ffffff;
+	color: #333333;
+	font-size:1em;
+	line-height:1.7em;
+
+}
+tr,td{
+	font-size:1em;
+	line-height:1.7em;
+}
+
+#main
+{
+	line-height:1.7em;
+}
+
+div.navi
+{
+	text-align :right;
+	font-style: italic;
+	color: #999999;
+	font-size: 80%;
+
+}
+
+h1{
+	font-size:1em;
+	margin-top: 20pt;
+	margin-bottom: 10pt;
+	text-align :left;
+	font-weight: bold;
+
+}
+
+
+div.quote{
+  font-style: italic;
+  font-size: 80%;
+  margin-left: 10pt;
+  margin-right: 10pt;
+  line-height: 130%;
+}
+
+a:link
+{
+  color: #6699CC;
+  text-decoration: none;
+}
+
+a:visited
+{
+  text-decoration: none;
+  color: #778899;
+}
+
+a:active
+{
+  text-decoration: none;
+  color: #6699CC;
+}
+
+a:hover
+{
+  text-decoration: none;
+  color: #6699CC;
+}
+
+.section{
+margin-left:0px;
+margin-right:0px;
+}
+h2{
+font-size:1em;
+margin-left:0px;
+margin-right:0px;
+}
+
+.subsection{
+margin-left:2em;
+margin-right:0;
+}
+h3{
+font-size:1em;
+margin-left:2em;
+margin-right:0;
+}
+
+.subsubsection{
+margin-left:4em;
+margin-right:0;
+
+}
+
+h4{
+font-size:1em;
+margin-left:4em;
+margin-right:0px;
+}
+
+.citation{
+	margin-top:1em;
+	margin-bottom:1em;
+	margin-left:10%;
+	margin-right:10%;
+	padding:10;
+    border: 1px solid #aaaaaa;
+}
+.note{
+	margin-left:10%;
+	margin-right:10%;
+	font-size:small;
+	line-height: 120%; 
+
+	}
+.date{
+color:#bbbbbb;
+font-size:x-small;
+}
+
+table{
+	margin: 1em auto 1em auto ;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #bbbbbb;
+	border-collapse: collapse;
+}
+
+th, td{
+	padding: 5px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #bbbbbb;
+}
